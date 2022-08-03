@@ -1,0 +1,473 @@
+[
+    {
+        "id": "e1daf39f3a3d3abe",
+        "type": "tab",
+        "label": "Flow 9",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "c511dd5ca5c45e6b",
+        "type": "http request",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "method": "GET",
+        "ret": "bin",
+        "paytoqs": "ignore",
+        "url": "http://192.168.1.77/capture",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "credentials": {
+            "user": "",
+            "password": ""
+        },
+        "x": 370,
+        "y": 260,
+        "wires": [
+            [
+                "938a8887a8539d76"
+            ]
+        ]
+    },
+    {
+        "id": "61de7a2eacae130c",
+        "type": "file",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "filename": "",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "setbymsg",
+        "x": 810,
+        "y": 260,
+        "wires": [
+            [
+                "1a0a3c881c286251"
+            ]
+        ]
+    },
+    {
+        "id": "938a8887a8539d76",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "msg.filename = \"home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/cam_photos/\"+global.get (\"fecha\")+\".jpg\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 260,
+        "wires": [
+            [
+                "61de7a2eacae130c"
+            ]
+        ]
+    },
+    {
+        "id": "a264f92381cf7f16",
+        "type": "exec",
+        "z": "e1daf39f3a3d3abe",
+        "command": "python home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/facecheckMQTT.py",
+        "addpay": "command",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "1a0a3c881c286251",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "\nmsg.command = \" -i \" +msg.filename + \" -j /home/hugo/Documents/Git/reconocimiento-facial/python/facedetection/my_db/\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 260,
+        "wires": [
+            [
+                "a264f92381cf7f16"
+            ]
+        ]
+    },
+    {
+        "id": "a865d9aef40f24d4",
+        "type": "ui_template",
+        "z": "e1daf39f3a3d3abe",
+        "group": "d6e7466b5cb0618c",
+        "name": "",
+        "order": 1,
+        "width": 7,
+        "height": 5,
+        "format": "<iframe width=\"320\" height=\"240\"\n    src=\"http://192.168.1.77:81/stream\">\n</iframe>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "x": 600,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "535a3d2083f61418",
+        "type": "mqtt in",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "topic": "codigoIoT/py",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "aa3107cbb6f29f72",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 540,
+        "wires": [
+            [
+                "519f5cfc78c9c75a"
+            ]
+        ]
+    },
+    {
+        "id": "519f5cfc78c9c75a",
+        "type": "json",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 370,
+        "y": 540,
+        "wires": [
+            [
+                "2b0efedc0ab94a1b"
+            ]
+        ]
+    },
+    {
+        "id": "2b0efedc0ab94a1b",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "var lista = Object.keys(msg.payload).length;\nlet lst = [lista];\nfor (var i = 0; i < lista; i++) {\n    lst [i] = msg.payload[i][\"VGG-Face_cosine\"];\n}\nmsg.lista = lst;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 540,
+        "wires": [
+            [
+                "a6e0075523f40143"
+            ]
+        ]
+    },
+    {
+        "id": "9d4ead71ba50b64b",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "var lista = Object.keys(msg.payload).length;\nfor (var i = 0; i < lista; i++) {\n    if (msg.max == msg.payload[i][\"VGG-Face_cosine\"]) {\n        msg.iden = msg.payload[i].identity;\n        msg.index = i;\n        return msg;\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 540,
+        "wires": [
+            [
+                "f8b8d2025b827bdd"
+            ]
+        ]
+    },
+    {
+        "id": "77049916924d8be2",
+        "type": "file in",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "filename": "",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 370,
+        "y": 720,
+        "wires": [
+            [
+                "656b20cec5ecc1b1"
+            ]
+        ]
+    },
+    {
+        "id": "656b20cec5ecc1b1",
+        "type": "json",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 570,
+        "y": 720,
+        "wires": [
+            [
+                "a6cd5e104083c74c",
+                "a30947eab3dcc20d"
+            ]
+        ]
+    },
+    {
+        "id": "e66ff7ef1c877521",
+        "type": "ui_button",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "group": "d6e7466b5cb0618c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Analizar",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 140,
+        "y": 260,
+        "wires": [
+            [
+                "c511dd5ca5c45e6b"
+            ]
+        ]
+    },
+    {
+        "id": "a6cd5e104083c74c",
+        "type": "ui_text",
+        "z": "e1daf39f3a3d3abe",
+        "group": "d6e7466b5cb0618c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Persona detectada",
+        "format": "{{msg.payload.Nombre}}",
+        "layout": "row-spread",
+        "x": 830,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "61a1f54fb0786297",
+        "type": "ui_text",
+        "z": "e1daf39f3a3d3abe",
+        "group": "d6e7466b5cb0618c",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Porcentaje de certeza",
+        "format": "{{msg.max}}",
+        "layout": "row-spread",
+        "x": 1040,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "a30947eab3dcc20d",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "msg.max = msg.max * 100;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 780,
+        "wires": [
+            [
+                "61a1f54fb0786297"
+            ]
+        ]
+    },
+    {
+        "id": "1704991c989fad1b",
+        "type": "inject",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "4ec5849b7bf2d6af"
+            ]
+        ]
+    },
+    {
+        "id": "4ec5849b7bf2d6af",
+        "type": "function",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "func": "global.set (\"fecha\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f8b8d2025b827bdd",
+        "type": "string",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "methods": [
+            {
+                "name": "append",
+                "params": [
+                    {
+                        "type": "msg",
+                        "value": "iden"
+                    }
+                ]
+            },
+            {
+                "name": "delRightMost",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "/"
+                    }
+                ]
+            },
+            {
+                "name": "append",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "/info.json"
+                    }
+                ]
+            }
+        ],
+        "prop": "home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/",
+        "propout": "filename",
+        "object": "str",
+        "objectout": "msg",
+        "x": 150,
+        "y": 720,
+        "wires": [
+            [
+                "77049916924d8be2"
+            ]
+        ]
+    },
+    {
+        "id": "a6e0075523f40143",
+        "type": "calculator",
+        "z": "e1daf39f3a3d3abe",
+        "name": "",
+        "inputMsgField": "lista",
+        "outputMsgField": "max",
+        "operation": "max",
+        "constant": "",
+        "round": false,
+        "decimals": 0,
+        "x": 800,
+        "y": 540,
+        "wires": [
+            [
+                "9d4ead71ba50b64b"
+            ]
+        ]
+    },
+    {
+        "id": "d6e7466b5cb0618c",
+        "type": "ui_group",
+        "name": "Capture",
+        "tab": "12d958034084dc72",
+        "order": 1,
+        "disp": true,
+        "width": "7",
+        "collapse": false
+    },
+    {
+        "id": "aa3107cbb6f29f72",
+        "type": "mqtt-broker",
+        "name": "LocalHost",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "hugo-sub-nodered",
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "12d958034084dc72",
+        "type": "ui_tab",
+        "name": "Face recognition",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

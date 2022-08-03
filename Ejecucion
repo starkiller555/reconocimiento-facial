@@ -1,0 +1,4 @@
+python3 home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/facecheckMQTT.py -i home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/cam_photos/fernando3.jpg -j /home/fernando/Documentos/GitHub/ReconocimientoFacial/python/facedetection/my_db/
+
+
+
